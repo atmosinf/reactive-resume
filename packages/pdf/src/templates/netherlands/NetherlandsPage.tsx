@@ -7,7 +7,7 @@ import type {
 	TemplateStyleContext,
 	TemplateStyleSlots,
 } from "../shared/types";
-import { Fragment, useMemo } from "react";
+import React, { Fragment, useMemo } from "react";
 import { rgbaStringToHex } from "@reactive-resume/utils/color";
 import { Image, Page, StyleSheet, View } from "#react-pdf-renderer";
 import { useRender } from "../../context";
@@ -42,6 +42,8 @@ type NetherlandsStyles = Omit<TemplateStyleSlots, "page"> & {
 	headerHeadline: Style;
 	headerContactList: Style;
 	headerContactItem: Style;
+	headerContactDivider: Style;
+	sidebarDivider: Style;
 };
 
 type NetherlandsTemplate = {
@@ -86,8 +88,9 @@ export const NetherlandsPage = ({ page, pageIndex }: TemplatePageProps) => {
 				>
 					{showHeader && hasPicture && <Image src={picture.url} style={styles.picture} />}
 
-					{sidebarSections.map((section) => (
+					{sidebarSections.map((section, index) => (
 						<Fragment key={section}>
+							{index > 0 && <View style={styles.sidebarDivider} />}
 							<Section section={section} placement="sidebar" />
 						</Fragment>
 					))}
@@ -116,6 +119,24 @@ export const NetherlandsPage = ({ page, pageIndex }: TemplatePageProps) => {
 const Header = ({ styles }: NetherlandsHeaderProps) => {
 	const { basics } = useRender();
 
+	// Build contact items, filtering out empty ones so dividers only appear between items
+	const contactItems: React.ReactNode[] = [];
+	if (basics.location) {
+		contactItems.push(<LocationContactItem key="location" location={basics.location} style={styles.headerContactItem} />);
+	}
+	if (basics.phone) {
+		contactItems.push(<PhoneContactItem key="phone" phone={basics.phone} style={styles.headerContactItem} />);
+	}
+	if (basics.email) {
+		contactItems.push(<EmailContactItem key="email" email={basics.email} style={styles.headerContactItem} />);
+	}
+	if (basics.website.url) {
+		contactItems.push(<WebsiteContactItem key="website" website={basics.website} style={styles.headerContactItem} />);
+	}
+	for (const field of basics.customFields) {
+		contactItems.push(<CustomFieldContactItem key={field.id} field={field} style={styles.headerContactItem} />);
+	}
+
 	return (
 		<View style={styles.header}>
 			<View style={styles.headerTitle}>
@@ -126,17 +147,17 @@ const Header = ({ styles }: NetherlandsHeaderProps) => {
 			</View>
 
 			<View style={styles.headerContactList}>
-				<LocationContactItem location={basics.location} style={styles.headerContactItem} />
-				<PhoneContactItem phone={basics.phone} style={styles.headerContactItem} />
-				<EmailContactItem email={basics.email} style={styles.headerContactItem} />
-				<WebsiteContactItem website={basics.website} style={styles.headerContactItem} />
-				{basics.customFields.map((field) => (
-					<CustomFieldContactItem key={field.id} field={field} style={styles.headerContactItem} />
+				{contactItems.map((item, index) => (
+					<Fragment key={index}>
+						{index > 0 && <View style={styles.headerContactDivider} />}
+						{item}
+					</Fragment>
 				))}
 			</View>
 		</View>
 	);
 };
+
 
 const useNetherlandsTemplate = (): NetherlandsTemplate => {
 	const { picture, metadata, rtl } = useRender();
@@ -146,15 +167,20 @@ const useNetherlandsTemplate = (): NetherlandsTemplate => {
 		const foreground = rgbaStringToHex(metadata.design.colors.text);
 		const background = rgbaStringToHex(metadata.design.colors.background);
 		const primary = rgbaStringToHex(metadata.design.colors.primary);
-		
+
+		// Sidebar colors: the sidebar background IS the primary color,
+		// and sidebar text is white/background color.
+		const sidebarBg = primary;
+		const sidebarFg = background;
+
 		const colors: TemplateColorRoles = {
 			foreground,
 			background,
 			primary,
-			sidebarForeground: background,
-			sidebarBackground: primary,
+			sidebarForeground: sidebarFg,
+			sidebarBackground: sidebarBg,
 		};
-		
+
 		const metrics = getTemplateMetrics(metadata.page);
 
 		const base = createBaseTemplateStyles({ metadata, foreground, r, metrics, picture });
@@ -170,15 +196,17 @@ const useNetherlandsTemplate = (): NetherlandsTemplate => {
 				lineHeight: metadata.typography.body.lineHeight,
 				direction: r.pageDirection,
 			},
+			// Main column section headings: uppercase, underlined, dark text
 			sectionHeading: {
-				fontSize: metadata.typography.heading.fontSize * 0.85,
-				color: primary,
+				fontSize: metadata.typography.heading.fontSize * 0.75,
+				textTransform: "uppercase",
+				letterSpacing: 1,
 				borderBottomWidth: 1,
-				borderBottomColor: primary,
-				paddingBottom: metrics.gapY(0.125),
+				borderBottomColor: foreground,
+				paddingBottom: metrics.gapY(0.2),
 			},
 			sidebarColumn: {
-				backgroundColor: primary,
+				backgroundColor: sidebarBg,
 			},
 			mainColumn: {
 				flex: 1,
@@ -189,46 +217,62 @@ const useNetherlandsTemplate = (): NetherlandsTemplate => {
 				borderRadius: picture.borderRadius,
 				objectFit: "cover",
 				alignSelf: "center",
-				marginBottom: metrics.gapY(0.5),
+				marginBottom: metrics.gapY(0.25),
 			},
 			header: {
 				flexDirection: r.row,
 				justifyContent: "space-between",
 				alignItems: "flex-start",
-				borderBottomWidth: 1,
-				borderBottomColor: rgbaStringToHex("rgba(224, 224, 224, 0.8)"),
-				paddingBottom: metrics.gapY(0.75),
+				marginBottom: metrics.gapY(0.25),
 			},
 			headerTitle: {
 				flexGrow: 1,
 				flexShrink: 0,
-				rowGap: metrics.gapY(0.125),
+				rowGap: metrics.gapY(0.2),
 			},
 			headerIdentity: {
 				...r.headerIdentity,
-				rowGap: metrics.gapY(0.35),
+				rowGap: metrics.gapY(0.25),
 			},
 			headerName: {
-				fontSize: metadata.typography.heading.fontSize * 1.5,
+				fontSize: metadata.typography.heading.fontSize * 1.8,
 				lineHeight: headerNameLineHeight,
+				fontWeight: 700,
 			},
 			headerHeadline: {
-				fontSize: metadata.typography.body.fontSize * 1.1,
-				color: primary,
+				fontSize: metadata.typography.body.fontSize * 0.95,
 				textTransform: "uppercase",
+				letterSpacing: 1.5,
+				color: foreground,
+				opacity: 0.7,
 			},
+			// Contact details stacked vertically on the right, self-contained block
 			headerContactList: {
 				flexDirection: "column",
-				rowGap: metrics.gapY(0.25),
-				alignItems: "flex-end",
-				maxWidth: "45%",
-				flexShrink: 1,
+				alignItems: "stretch",
+				alignSelf: "flex-start",
+				paddingTop: metrics.gapY(0.25),
+				flexShrink: 0,
 			},
 			headerContactItem: {
-				flexDirection: rtl ? "row" : "row-reverse",
+				flexDirection: r.row,
 				alignItems: "center",
-				columnGap: metrics.gapX(0.25),
-				fontSize: metadata.typography.body.fontSize * 0.9,
+				columnGap: metrics.gapX(0.3),
+				fontSize: metadata.typography.body.fontSize * 0.85,
+				paddingVertical: metrics.gapY(0.2),
+				flexWrap: "wrap",
+			},
+			headerContactDivider: {
+				alignSelf: "stretch",
+				height: 0.5,
+				backgroundColor: rgbaStringToHex("rgba(180, 180, 180, 0.7)"),
+			},
+			// Horizontal divider between sidebar sections
+			sidebarDivider: {
+				width: "100%",
+				height: 0.75,
+				backgroundColor: sidebarFg,
+				opacity: 0.3,
 			},
 		});
 
@@ -241,8 +285,8 @@ const useNetherlandsTemplate = (): NetherlandsTemplate => {
 				top: 0,
 				bottom: 0,
 				left: 7.5,
-				width: 1,
-				backgroundColor: primary,
+				width: 1.5,
+				backgroundColor: foreground,
 			},
 			item: {
 				flexDirection: "row",
@@ -254,13 +298,11 @@ const useNetherlandsTemplate = (): NetherlandsTemplate => {
 				alignItems: "center",
 			},
 			dot: {
-				width: 9,
-				height: 9,
-				marginTop: 10,
+				width: 10,
+				height: 10,
+				marginTop: 8,
 				borderRadius: 999,
-				borderWidth: 1,
-				borderColor: primary,
-				backgroundColor: background,
+				backgroundColor: foreground,
 			},
 			content: {
 				flex: 1,
@@ -273,6 +315,7 @@ const useNetherlandsTemplate = (): NetherlandsTemplate => {
 				defaultForeground: colors.foreground,
 				sidebarForeground: colors.sidebarForeground,
 			});
+
 		const accentFor = ({ placement, colors }: TemplateStyleContext) =>
 			resolvePlacementColor({
 				placement,
@@ -285,12 +328,11 @@ const useNetherlandsTemplate = (): NetherlandsTemplate => {
 				...sectionTimelineStyles,
 				line: (context) => ({
 					...sectionTimelineStyles.line,
-					backgroundColor: accentFor(context),
+					backgroundColor: foregroundFor(context),
 				}),
 				dot: (context) => ({
 					...sectionTimelineStyles.dot,
-					borderColor: accentFor(context),
-					backgroundColor: context.colors.background,
+					backgroundColor: foregroundFor(context),
 				}),
 			},
 		};
@@ -315,17 +357,18 @@ const useNetherlandsTemplate = (): NetherlandsTemplate => {
 					...baseStyles.alignEnd,
 					...(context.placement === "sidebar" ? { textAlign: "left" } : {}),
 				}),
+				// Sidebar section headings: uppercase, bold, white, with underline
 				sectionHeading: (context) => ({
 					...baseStyles.sectionHeading,
-					color: accentFor(context),
-					borderBottomColor: accentFor(context),
+					color: foregroundFor(context),
+					borderBottomColor: foregroundFor(context),
 				}),
-				levelItem: (context) => ({ borderColor: accentFor(context) }),
-				levelItemActive: (context) => ({ backgroundColor: accentFor(context) }),
+				levelItem: (context) => ({ borderColor: foregroundFor(context) }),
+				levelItemActive: (context) => ({ backgroundColor: foregroundFor(context) }),
 				icon: (context) => ({
 					display: metadata.page.hideIcons ? "none" : "flex",
 					size: metadata.typography.body.fontSize,
-					color: accentFor(context),
+					color: foregroundFor(context),
 				}),
 			} satisfies NetherlandsStyles,
 			featureStyles,
