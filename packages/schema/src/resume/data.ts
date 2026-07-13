@@ -470,6 +470,10 @@ export const pageSchema = z.object({
 		.boolean()
 		.describe("Whether to hide the icons next to skill items.")
 		.catch(false),
+	hideInterestsIcons: z
+		.boolean()
+		.describe("Whether to hide the icons next to interest items.")
+		.catch(false),
 });
 
 export const levelDesignSchema = z.object({

@@ -720,7 +720,7 @@ const InterestsSection = ({ sectionId = "interests", sectionData }: ItemSectionP
 					<SectionItem key={item.id}>
 						<SectionItemHeader>
 							<View style={composeStyles(inlineStyle)}>
-								<Icon name={item.icon as IconName} />
+								{!data.metadata.page.hideInterestsIcons && <Icon name={item.icon as IconName} />}
 								<Bold>{item.name}</Bold>
 							</View>
 						</SectionItemHeader>
