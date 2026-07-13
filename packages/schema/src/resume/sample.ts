@@ -601,6 +601,7 @@ export const sampleResumeData: ResumeData = {
 			hideIcons: false,
 			hideSectionIcons: false,
 			contactFontSize: 10,
+			hideSkillsIcons: false,
 		},
 		design: {
 			level: {

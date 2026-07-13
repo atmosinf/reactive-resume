@@ -466,6 +466,10 @@ export const pageSchema = z.object({
 		.max(24)
 		.describe("The font size for the contact information in the header, defined in points (pt).")
 		.catch(10),
+	hideSkillsIcons: z
+		.boolean()
+		.describe("Whether to hide the icons next to skill items.")
+		.catch(false),
 });
 
 export const levelDesignSchema = z.object({

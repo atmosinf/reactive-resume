@@ -80,6 +80,7 @@ export const defaultResumeData: ResumeData = {
 			hideIcons: false,
 			hideSectionIcons: true,
 			contactFontSize: 10,
+			hideSkillsIcons: false,
 		},
 		design: {
 			colors: {

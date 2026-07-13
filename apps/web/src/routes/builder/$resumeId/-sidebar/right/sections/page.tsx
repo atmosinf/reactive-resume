@@ -64,6 +64,7 @@ function PageSectionForm() {
 		{ name: "hideLinkUnderline" as const, label: <Trans>Hide Link Underline</Trans> },
 		{ name: "hideIcons" as const, label: <Trans>Hide Icons</Trans> },
 		{ name: "hideSectionIcons" as const, label: <Trans>Hide Section Icons</Trans> },
+		{ name: "hideSkillsIcons" as const, label: "Hide Skills Icons" },
 	];
 
 	return (
