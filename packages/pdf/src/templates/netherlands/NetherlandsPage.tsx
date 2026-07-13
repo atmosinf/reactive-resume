@@ -172,6 +172,8 @@ const useNetherlandsTemplate = (): NetherlandsTemplate => {
 		// and sidebar text is white/background color.
 		const sidebarBg = primary;
 		const sidebarFg = background;
+		// Unified secondary color for headline, contacts, descriptions, dates, timeline
+		const secondaryColor = rgbaStringToHex("rgba(80, 80, 80, 1)");
 
 		const colors: TemplateColorRoles = {
 			foreground,
@@ -187,6 +189,11 @@ const useNetherlandsTemplate = (): NetherlandsTemplate => {
 
 		const baseStyles = StyleSheet.create({
 			...base,
+			// Increase gap between section item header and description
+			div: {
+				...base.div,
+				rowGap: metrics.gapY(0.3),
+			},
 			page: {
 				flexDirection: r.row,
 				color: foreground,
@@ -204,6 +211,7 @@ const useNetherlandsTemplate = (): NetherlandsTemplate => {
 				borderBottomWidth: 1,
 				borderBottomColor: foreground,
 				paddingBottom: metrics.gapY(0.2),
+				marginBottom: metrics.gapY(0.4),
 			},
 			sidebarColumn: {
 				backgroundColor: sidebarBg,
@@ -243,8 +251,7 @@ const useNetherlandsTemplate = (): NetherlandsTemplate => {
 				fontSize: metadata.typography.body.fontSize * 0.95,
 				textTransform: "uppercase",
 				letterSpacing: 1.5,
-				color: foreground,
-				opacity: 0.7,
+				color: secondaryColor,
 			},
 			// Contact details stacked vertically on the right, self-contained block
 			headerContactList: {
@@ -258,7 +265,10 @@ const useNetherlandsTemplate = (): NetherlandsTemplate => {
 				flexDirection: r.row,
 				alignItems: "center",
 				columnGap: metrics.gapX(0.3),
-				fontSize: metadata.typography.body.fontSize * 0.85,
+				// Contact font tracks heading font size so it can be controlled via
+				// Typography → Heading → Font Size independently of body text
+				fontSize: metadata.typography.heading.fontSize * 0.55,
+				color: secondaryColor,
 				paddingVertical: metrics.gapY(0.2),
 				flexWrap: "wrap",
 			},
@@ -276,6 +286,8 @@ const useNetherlandsTemplate = (): NetherlandsTemplate => {
 			},
 		});
 
+
+
 		const sectionTimelineStyles = StyleSheet.create({
 			items: {
 				position: "relative",
@@ -286,7 +298,7 @@ const useNetherlandsTemplate = (): NetherlandsTemplate => {
 				bottom: 0,
 				left: 7.5,
 				width: 1.5,
-				backgroundColor: foreground,
+				backgroundColor: secondaryColor,
 			},
 			item: {
 				flexDirection: "row",
@@ -302,10 +314,11 @@ const useNetherlandsTemplate = (): NetherlandsTemplate => {
 				height: 10,
 				marginTop: 8,
 				borderRadius: 999,
-				backgroundColor: foreground,
+				backgroundColor: secondaryColor,
 			},
 			content: {
 				flex: 1,
+				minWidth: 0,
 			},
 		});
 
@@ -326,14 +339,6 @@ const useNetherlandsTemplate = (): NetherlandsTemplate => {
 		const featureStyles = {
 			sectionTimeline: {
 				...sectionTimelineStyles,
-				line: (context) => ({
-					...sectionTimelineStyles.line,
-					backgroundColor: foregroundFor(context),
-				}),
-				dot: (context) => ({
-					...sectionTimelineStyles.dot,
-					backgroundColor: foregroundFor(context),
-				}),
 			},
 		};
 
@@ -344,9 +349,26 @@ const useNetherlandsTemplate = (): NetherlandsTemplate => {
 				text: (context) => ({ ...baseStyles.text, color: foregroundFor(context) }),
 				heading: (context) => ({ ...baseStyles.heading, color: foregroundFor(context) }),
 				link: (context) => ({ ...baseStyles.link, color: foregroundFor(context) }),
-				richParagraph: (context) => ({ ...baseStyles.richParagraph, color: foregroundFor(context) }),
-				richListItemMarker: (context) => ({ ...baseStyles.richListItemMarker, color: foregroundFor(context) }),
-				richListItemContent: (context) => ({ ...baseStyles.richListItemContent, color: foregroundFor(context) }),
+				richParagraph: (context) => ({
+					...baseStyles.richParagraph,
+					color: context.placement === "sidebar" ? foregroundFor(context) : secondaryColor,
+					fontSize: context.placement === "sidebar" ? undefined : metadata.typography.body.fontSize - 1,
+				}),
+				richListItemMarker: (context) => ({
+					...baseStyles.richListItemMarker,
+					color: context.placement === "sidebar" ? foregroundFor(context) : secondaryColor,
+					fontSize: context.placement === "sidebar" ? undefined : metadata.typography.body.fontSize - 1,
+				}),
+				richListItemContent: (context) => ({
+					...baseStyles.richListItemContent,
+					color: context.placement === "sidebar" ? foregroundFor(context) : secondaryColor,
+					fontSize: context.placement === "sidebar" ? undefined : metadata.typography.body.fontSize - 1,
+				}),
+				// Secondary labels (dates, etc.) use the same secondaryColor
+				small: (context) => ({
+					...baseStyles.small,
+					color: context.placement === "sidebar" ? foregroundFor(context) : secondaryColor,
+				}),
 				splitRow: (context) => ({
 					...baseStyles.splitRow,
 					...(context.placement === "sidebar"
@@ -355,6 +377,7 @@ const useNetherlandsTemplate = (): NetherlandsTemplate => {
 				}),
 				alignEnd: (context) => ({
 					...baseStyles.alignEnd,
+					color: context.placement === "sidebar" ? foregroundFor(context) : secondaryColor,
 					...(context.placement === "sidebar" ? { textAlign: "left" } : {}),
 				}),
 				// Sidebar section headings: uppercase, bold, white, with underline
