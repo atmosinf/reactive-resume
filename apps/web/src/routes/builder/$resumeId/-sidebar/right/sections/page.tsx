@@ -58,7 +58,6 @@ function PageSectionForm() {
 		{ name: "marginY" as const, label: <Trans>Margin (Vertical)</Trans>, min: 0, max: 100 as number | undefined },
 		{ name: "gapX" as const, label: <Trans>Spacing (Horizontal)</Trans>, min: 0, max: undefined },
 		{ name: "gapY" as const, label: <Trans>Spacing (Vertical)</Trans>, min: 0, max: undefined },
-		{ name: "contactFontSize" as const, label: "Contact Font Size", min: 6, max: 24 as number | undefined },
 	];
 
 	const pageSwitchFields = [

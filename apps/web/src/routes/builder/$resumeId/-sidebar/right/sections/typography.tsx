@@ -49,6 +49,7 @@ type TypographyForm = ReturnType<typeof useTypographyForm>;
 function TypographySectionForm() {
 	const resume = useResume();
 	const typography = resume?.data.metadata.typography;
+	const contactFontSize = resume?.data.metadata.page.contactFontSize ?? 10;
 	const updateResumeData = useUpdateResumeData();
 
 	const persist = (data: FormValues) => {
@@ -64,6 +65,12 @@ function TypographySectionForm() {
 		persist(form.state.values);
 	};
 
+	const handleContactFontSizeChange = (value: number) => {
+		updateResumeData((draft) => {
+			draft.metadata.page.contactFontSize = value;
+		});
+	};
+
 	return (
 		<form
 			className="grid @md:grid-cols-2 grid-cols-1 gap-4"
@@ -77,6 +84,32 @@ function TypographySectionForm() {
 			<TypographyGroupFields form={form} prefix="body" handleAutoSave={handleAutoSave} />
 			<TypographyFieldGroup label={<Trans context="Headings or Titles (H1, H2, H3, H4, H5, H6)">Heading</Trans>} />
 			<TypographyGroupFields form={form} prefix="heading" handleAutoSave={handleAutoSave} />
+
+			<TypographyFieldGroup label="Contact" />
+			<FormItem>
+				<FormLabel>Font Size</FormLabel>
+				<InputGroup>
+					<FormControl
+						render={
+							<InputGroupInput
+								name="contactFontSize"
+								value={contactFontSize}
+								min={6}
+								max={24}
+								step={0.5}
+								type="number"
+								onChange={(e) => {
+									const v = e.target.value;
+									if (v !== "") handleContactFontSizeChange(Number(v));
+								}}
+							/>
+						}
+					/>
+					<InputGroupAddon align="inline-end">
+						<InputGroupText>pt</InputGroupText>
+					</InputGroupAddon>
+				</InputGroup>
+			</FormItem>
 		</form>
 	);
 }
