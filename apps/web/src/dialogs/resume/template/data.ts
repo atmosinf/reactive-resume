@@ -88,6 +88,13 @@ export const templates = {
 		tags: ["Single-column", "ATS friendly", "Inline header", "Compact", "Asian style", "CN/JP/KR"],
 		sidebarPosition: "none",
 	},
+	netherlands: {
+		name: "Netherlands",
+		description: msg`Two-column template with a dark left sidebar, circular profile photo, and chronological timelines in the main column.`,
+		imageUrl: "/templates/jpg/netherlands.jpg",
+		tags: ["Two-column", "Dark sidebar", "Timeline", "Circular profile"],
+		sidebarPosition: "left",
+	},
 	onyx: {
 		name: "Onyx",
 		description: msg`Single-column with a sidebar and clean grid layout; versatile for any professional or technical role.`,

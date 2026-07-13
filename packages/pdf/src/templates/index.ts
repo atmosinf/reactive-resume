@@ -15,6 +15,7 @@ import { OnyxPage } from "./onyx/OnyxPage";
 import { PikachuPage } from "./pikachu/PikachuPage";
 import { RhyhornPage } from "./rhyhorn/RhyhornPage";
 import { ScizorPage } from "./scizor/ScizorPage";
+import { NetherlandsPage } from "./netherlands/NetherlandsPage";
 
 export const templatePages: Partial<Record<Template, TemplatePage>> = {
 	azurill: AzurillPage,
@@ -28,6 +29,7 @@ export const templatePages: Partial<Record<Template, TemplatePage>> = {
 	lapras: LaprasPage,
 	leafish: LeafishPage,
 	meowth: MeowthPage,
+	netherlands: NetherlandsPage,
 	onyx: OnyxPage,
 	pikachu: PikachuPage,
 	rhyhorn: RhyhornPage,

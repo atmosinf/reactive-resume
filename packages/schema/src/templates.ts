@@ -12,6 +12,7 @@ export const templateSchema = z.enum([
 	"lapras",
 	"leafish",
 	"meowth",
+	"netherlands",
 	"onyx",
 	"pikachu",
 	"rhyhorn",
