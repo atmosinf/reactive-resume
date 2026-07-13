@@ -32,11 +32,26 @@ export const ResumeDocument = ({ data, template, renderOptions, resolveSectionTi
 	const creationDate = useMemo(() => new Date(), []);
 	const hasCjkContent = useMemo(() => resumeContentContainsCJK(data), [data]);
 	const scripts = useMemo(() => resumeContentScripts(data), [data]);
+	const additionalFontFamilies = useMemo(() => {
+		const families = new Set<string>();
+		if (!data.metadata.styleRules) return families;
+		for (const rule of data.metadata.styleRules) {
+			if (!rule.enabled || !rule.slots) continue;
+			for (const slot of Object.values(rule.slots)) {
+				if (slot && typeof slot === "object" && "fontFamily" in slot && typeof slot.fontFamily === "string") {
+					families.add(slot.fontFamily);
+				}
+			}
+		}
+		return families;
+	}, [data.metadata.styleRules]);
+
 	const typography = registerFonts(
 		data.metadata.typography,
 		data.metadata.page.locale as Locale,
 		hasCjkContent,
 		scripts,
+		additionalFontFamilies,
 	) as Typography;
 
 	// `registerFonts` widens `fontFamily` to `string | string[]` for CJK

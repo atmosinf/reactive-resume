@@ -59,6 +59,7 @@ const toStyle = (intent: StyleIntent | undefined): Style => {
 
 	if (intent.opacity !== undefined) style.opacity = clamp(intent.opacity, 0, 1);
 	if (intent.fontSize !== undefined) style.fontSize = clamp(intent.fontSize, 6, 48);
+	if (intent.fontFamily !== undefined) style.fontFamily = intent.fontFamily;
 	if (intent.fontWeight !== undefined) style.fontWeight = intent.fontWeight;
 	if (intent.fontStyle !== undefined) style.fontStyle = intent.fontStyle;
 	if (intent.lineHeight !== undefined) style.lineHeight = clamp(intent.lineHeight, 0.5, 4);

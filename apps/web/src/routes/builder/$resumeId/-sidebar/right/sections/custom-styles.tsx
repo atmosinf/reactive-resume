@@ -19,6 +19,7 @@ import { slugify } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { ColorPicker } from "@/components/input/color-picker";
 import { Combobox } from "@/components/ui/combobox";
+import { FontFamilyCombobox } from "@/components/typography/combobox";
 import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { getSectionTitle } from "@/libs/resume/section";
 import { SectionBase } from "../shared/section-base";
@@ -528,6 +529,12 @@ function RuleIntentEditor({ idPrefix, intent, onChange }: RuleIntentEditorProps)
 						max={48}
 						onChange={(fontSize) => onChange({ fontSize })}
 					/>
+					<FontFamilyField
+						label={"Font Family"}
+						id={`${idPrefix}-font-family`}
+						value={intent.fontFamily}
+						onChange={(fontFamily) => onChange({ fontFamily })}
+					/>
 					<FontWeightField
 						label={"Font Weight"}
 						id={`${idPrefix}-font-weight`}
@@ -690,6 +697,29 @@ function IntentSelectField<TValue extends string>({
 			<Combobox
 				id={id}
 				options={[...options]}
+				value={value ?? null}
+				onValueChange={(nextValue) => onChange(nextValue ?? undefined)}
+				className="w-full"
+				showClear
+				placeholder="Default"
+				searchPlaceholder={`Search ${label.toLowerCase()}...`}
+			/>
+		</Field>
+	);
+}
+
+type FontFamilyFieldProps = {
+	label: string;
+	id: string;
+	value: StyleIntent["fontFamily"] | undefined;
+	onChange: (value: StyleIntent["fontFamily"] | undefined) => void;
+};
+
+function FontFamilyField({ label, id, value, onChange }: FontFamilyFieldProps) {
+	return (
+		<Field label={label} id={id}>
+			<FontFamilyCombobox
+				id={id}
 				value={value ?? null}
 				onValueChange={(nextValue) => onChange(nextValue ?? undefined)}
 				className="w-full"

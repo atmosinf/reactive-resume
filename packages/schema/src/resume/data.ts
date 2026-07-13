@@ -521,6 +521,7 @@ const styleIntentSchema = z
 		textDecorationColor: z.string().optional(),
 		opacity: z.number().min(0).max(1).optional(),
 		fontSize: z.number().min(6).max(48).optional(),
+		fontFamily: z.string().optional(),
 		fontWeight: fontWeightSchema.optional(),
 		fontStyle: z.enum(["normal", "italic"]).optional(),
 		lineHeight: z.number().min(0.5).max(4).optional(),

@@ -215,6 +215,7 @@ export const registerFonts = (
 	locale: Locale,
 	hasCjkContent = false,
 	scripts?: Set<Script>,
+	additionalFontFamilies?: Set<string>,
 ): PdfTypography => {
 	// CJK needs per-character line breaking. This must stay CJK-only: applying
 	// it to Arabic (cursive, joined letters) or Thai (combining marks) would
@@ -260,6 +261,20 @@ export const registerFonts = (
 		registerFont(bodyFontFamily, bodyRange.highest, italic);
 		registerFont(headingFontFamily, headingRange.lowest, italic);
 		registerFont(headingFontFamily, headingRange.highest, italic);
+	}
+
+	if (additionalFontFamilies) {
+		for (const family of additionalFontFamilies) {
+			const resolvedFamily = resolvePdfFontFamily(family);
+			const font = getFont(resolvedFamily);
+			if (font && font.weights && font.weights.length > 0) {
+				const range = getFontWeightRange(font.weights);
+				for (const italic of [false, true]) {
+					registerFont(resolvedFamily, range.lowest, italic);
+					registerFont(resolvedFamily, range.highest, italic);
+				}
+			}
+		}
 	}
 
 	// Register script fallbacks so textkit can substitute per-codepoint for
