@@ -460,6 +460,12 @@ export const pageSchema = z.object({
 		.boolean()
 		.describe("Whether to hide the section heading icons displayed before section titles.")
 		.catch(true),
+	contactFontSize: z
+		.number()
+		.min(6)
+		.max(24)
+		.describe("The font size for the contact information in the header, defined in points (pt).")
+		.catch(10),
 });
 
 export const levelDesignSchema = z.object({

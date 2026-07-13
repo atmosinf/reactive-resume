@@ -600,6 +600,7 @@ export const sampleResumeData: ResumeData = {
 			hideLinkUnderline: false,
 			hideIcons: false,
 			hideSectionIcons: false,
+			contactFontSize: 10,
 		},
 		design: {
 			level: {

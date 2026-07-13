@@ -42,6 +42,7 @@ type NetherlandsStyles = Omit<TemplateStyleSlots, "page"> & {
 	headerHeadline: Style;
 	headerContactList: Style;
 	headerContactItem: Style;
+	headerContactTextStyle: Style;
 	headerContactDivider: Style;
 	sidebarDivider: Style;
 };
@@ -122,19 +123,19 @@ const Header = ({ styles }: NetherlandsHeaderProps) => {
 	// Build contact items, filtering out empty ones so dividers only appear between items
 	const contactItems: React.ReactNode[] = [];
 	if (basics.location) {
-		contactItems.push(<LocationContactItem key="location" location={basics.location} style={styles.headerContactItem} />);
+		contactItems.push(<LocationContactItem key="location" location={basics.location} style={styles.headerContactItem} textStyle={styles.headerContactTextStyle} />);
 	}
 	if (basics.phone) {
-		contactItems.push(<PhoneContactItem key="phone" phone={basics.phone} style={styles.headerContactItem} />);
+		contactItems.push(<PhoneContactItem key="phone" phone={basics.phone} style={styles.headerContactItem} textStyle={styles.headerContactTextStyle} />);
 	}
 	if (basics.email) {
-		contactItems.push(<EmailContactItem key="email" email={basics.email} style={styles.headerContactItem} />);
+		contactItems.push(<EmailContactItem key="email" email={basics.email} style={styles.headerContactItem} textStyle={styles.headerContactTextStyle} />);
 	}
 	if (basics.website.url) {
-		contactItems.push(<WebsiteContactItem key="website" website={basics.website} style={styles.headerContactItem} />);
+		contactItems.push(<WebsiteContactItem key="website" website={basics.website} style={styles.headerContactItem} textStyle={styles.headerContactTextStyle} />);
 	}
 	for (const field of basics.customFields) {
-		contactItems.push(<CustomFieldContactItem key={field.id} field={field} style={styles.headerContactItem} />);
+		contactItems.push(<CustomFieldContactItem key={field.id} field={field} style={styles.headerContactItem} textStyle={styles.headerContactTextStyle} />);
 	}
 
 	return (
@@ -265,12 +266,15 @@ const useNetherlandsTemplate = (): NetherlandsTemplate => {
 				flexDirection: r.row,
 				alignItems: "center",
 				columnGap: metrics.gapX(0.3),
-				// Contact font tracks heading font size so it can be controlled via
-				// Typography → Heading → Font Size independently of body text
-				fontSize: metadata.typography.heading.fontSize * 0.55,
 				color: secondaryColor,
 				paddingVertical: metrics.gapY(0.2),
 				flexWrap: "wrap",
+			},
+			// Explicit text style for contact items — overrides the Text primitive's
+			// built-in body fontSize so contactFontSize actually takes effect
+			headerContactTextStyle: {
+				fontSize: metadata.page.contactFontSize ?? metadata.typography.body.fontSize * 0.8,
+				color: secondaryColor,
 			},
 			headerContactDivider: {
 				alignSelf: "stretch",
