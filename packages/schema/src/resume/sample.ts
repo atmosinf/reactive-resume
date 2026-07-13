@@ -603,6 +603,7 @@ export const sampleResumeData: ResumeData = {
 			contactFontSize: 10,
 			hideSkillsIcons: false,
 			hideInterestsIcons: false,
+			detailFontSize: 10,
 		},
 		design: {
 			level: {

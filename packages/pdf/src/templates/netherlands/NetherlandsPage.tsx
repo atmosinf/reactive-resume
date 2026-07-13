@@ -382,6 +382,8 @@ const useNetherlandsTemplate = (): NetherlandsTemplate => {
 				alignEnd: (context) => ({
 					...baseStyles.alignEnd,
 					color: context.placement === "sidebar" ? foregroundFor(context) : secondaryColor,
+					// Detail font size — controlled via Typography → Detail (Date / Location) → Font Size
+					fontSize: metadata.page.detailFontSize ?? metadata.typography.body.fontSize,
 					...(context.placement === "sidebar" ? { textAlign: "left" } : {}),
 				}),
 				// Sidebar section headings: uppercase, bold, white, with underline

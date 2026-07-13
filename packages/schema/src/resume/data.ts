@@ -474,6 +474,12 @@ export const pageSchema = z.object({
 		.boolean()
 		.describe("Whether to hide the icons next to interest items.")
 		.catch(false),
+	detailFontSize: z
+		.number()
+		.min(6)
+		.max(24)
+		.describe("The font size for dates and locations in experience/education sections, in points (pt).")
+		.catch(10),
 });
 
 export const levelDesignSchema = z.object({

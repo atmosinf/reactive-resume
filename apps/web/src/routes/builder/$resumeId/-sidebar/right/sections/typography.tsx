@@ -50,6 +50,7 @@ function TypographySectionForm() {
 	const resume = useResume();
 	const typography = resume?.data.metadata.typography;
 	const contactFontSize = resume?.data.metadata.page.contactFontSize ?? 10;
+	const detailFontSize = resume?.data.metadata.page.detailFontSize ?? 10;
 	const updateResumeData = useUpdateResumeData();
 
 	const persist = (data: FormValues) => {
@@ -68,6 +69,12 @@ function TypographySectionForm() {
 	const handleContactFontSizeChange = (value: number) => {
 		updateResumeData((draft) => {
 			draft.metadata.page.contactFontSize = value;
+		});
+	};
+
+	const handleDetailFontSizeChange = (value: number) => {
+		updateResumeData((draft) => {
+			draft.metadata.page.detailFontSize = value;
 		});
 	};
 
@@ -101,6 +108,32 @@ function TypographySectionForm() {
 								onChange={(e) => {
 									const v = e.target.value;
 									if (v !== "") handleContactFontSizeChange(Number(v));
+								}}
+							/>
+						}
+					/>
+					<InputGroupAddon align="inline-end">
+						<InputGroupText>pt</InputGroupText>
+					</InputGroupAddon>
+				</InputGroup>
+			</FormItem>
+
+			<TypographyFieldGroup label="Detail (Date / Location)" />
+			<FormItem>
+				<FormLabel>Font Size</FormLabel>
+				<InputGroup>
+					<FormControl
+						render={
+							<InputGroupInput
+								name="detailFontSize"
+								value={detailFontSize}
+								min={6}
+								max={24}
+								step={0.5}
+								type="number"
+								onChange={(e) => {
+									const v = e.target.value;
+									if (v !== "") handleDetailFontSizeChange(Number(v));
 								}}
 							/>
 						}
